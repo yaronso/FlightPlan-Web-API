@@ -15,6 +15,8 @@ namespace FlightControlWeb.Models
         // https://www.jsonutils.com/
         public class FlightPlan
         {
+            // TODO - verify about FlightPlanID
+            public string FlightPlanID { get; set; }
             public int passengers { get; set; }
             public string company_name { get; set; }
             public InitialLocation initial_location { get; set; }
