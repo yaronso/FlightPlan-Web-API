@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FlightControlWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using FlightControlWeb.Models;
 
 namespace FlightControlWeb.Controllers
 {
@@ -12,36 +13,113 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightPlanController : ControllerBase
     {
-        private List<FlightPlan> FlightPlans = new List<FlightPlan>();
+        private readonly FlightPlanContext _context;
 
-        // GET api/FlightPlan/5
-        [HttpGet("{FlightID}", Name = "GetFlightID")]
-        public ActionResult<FlightPlan> GetServerID(string id)
+        // CTR
+        public FlightPlanController(FlightPlanContext context)
         {
-            bool isOk = false;
-            // iterate through the flights plan list
-            foreach (var FlightPlan in FlightPlans)
-            {
-                if (FlightPlan.FlightPlanID.Equals(id))
-                {
-                    isOk = true;
-                }
-            }
-            if (!isOk)
+            _context = context;
+        }
+
+        // GET: api/FlightPlan
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<FlightPlan>>> GetFpDB()
+        {
+            // Return async the Flights Plans DB.
+            return await _context.FpDB.ToListAsync();
+        }
+
+        // GET: api/FlightPlan/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<FlightPlan>> GetFlightPlan(string id)
+        {
+            var flightPlan = await _context.FpDB.FindAsync(id);
+
+            if (flightPlan == null)
             {
                 return NotFound();
             }
-            return Ok(id);
+
+            return flightPlan;
         }
 
-        // POST api/FlightPlan
-        [HttpPost]
-        public ActionResult Post(FlightPlan fp)
+        // PUT: api/FlightPlan/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutFlightPlan(string id, FlightPlan flightPlan)
         {
-            FlightPlans.Add(fp);
-            return CreatedAtAction(actionName: "GetFlightID", new
-            { FlightId = fp.FlightPlanID}, fp);
+            if (id != flightPlan.FlightPlanID)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(flightPlan).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!FlightPlanExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
+        // POST: api/FlightPlan
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<FlightPlan>> PostFlightPlan(FlightPlan flightPlan)
+        {
+            _context.FpDB.Add(flightPlan);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (FlightPlanExists(flightPlan.FlightPlanID))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return CreatedAtAction("GetFlightPlan", new { id = flightPlan.FlightPlanID }, flightPlan);
+        }
+
+        // DELETE: api/FlightPlan/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<FlightPlan>> DeleteFlightPlan(string id)
+        {
+            var flightPlan = await _context.FpDB.FindAsync(id);
+            if (flightPlan == null)
+            {
+                return NotFound();
+            }
+
+            _context.FpDB.Remove(flightPlan);
+            await _context.SaveChangesAsync();
+
+            return flightPlan;
+        }
+
+        private bool FlightPlanExists(string id)
+        {
+            return _context.FpDB.Any(e => e.FlightPlanID == id);
+        }
     }
 }

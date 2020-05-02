@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FlightControlWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using FlightControlWeb.Models;
 
 namespace FlightControlWeb.Controllers
 {
@@ -12,77 +13,111 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class ServersController : ControllerBase
     {
-        private List<Servers> ServersList = new List<Servers>();
-        
-        // GET: api/servers
+        private readonly ServersContext _context;
+
+        public ServersController(ServersContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/Servers
         [HttpGet]
-        public ActionResult<List<Servers>> GetAllServers()
+        public async Task<ActionResult<IEnumerable<Servers>>> GetServersDB()
         {
-            return ServersList;
+            return await _context.ServersDB.ToListAsync();
         }
 
-        // GET api/servers/5
-        [HttpGet("{ServerId}" , Name = "GetServerID")]
-        public ActionResult<Servers> GetServerID(string id)
+        // GET: api/Servers/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Servers>> GetServers(string id)
         {
-            bool isOk = false;
-            // iterate through the servers list
-            foreach (var Servers in ServersList) { 
-                if(Servers.ServerId.Equals(id)) { 
-                    isOk = true;
-                }
-            }
-            if(!isOk) 
+            var servers = await _context.ServersDB.FindAsync(id);
+
+            if (servers == null)
             {
                 return NotFound();
             }
-            return Ok(id);
 
+            return servers;
         }
 
-        /* GET api/servers/6
-        [HttpGet("{ServerURL}", Name = "GetServerURL")]
-        public ActionResult<Servers> GetServerURL(string URL)
+        // PUT: api/Servers/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutServers(string id, Servers servers)
         {
-            bool isOk = false;
-            // iterate through the servers list
-            foreach (var Servers in ServersList)
+            if (id != servers.ServerId)
             {
-                if (Servers.ServerURL.Equals(URL))
+                return BadRequest();
+            }
+
+            _context.Entry(servers).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ServersExists(id))
                 {
-                    isOk = true;
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
                 }
             }
-            if (!isOk)
+
+            return NoContent();
+        }
+
+        // POST: api/Servers
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<Servers>> PostServers(Servers servers)
+        {
+            _context.ServersDB.Add(servers);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (ServersExists(servers.ServerId))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return CreatedAtAction("GetServers", new { id = servers.ServerId }, servers);
+        }
+
+        // DELETE: api/Servers/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Servers>> DeleteServers(string id)
+        {
+            var servers = await _context.ServersDB.FindAsync(id);
+            if (servers == null)
             {
                 return NotFound();
             }
-            return Ok(URL);
 
-        }*/
+            _context.ServersDB.Remove(servers);
+            await _context.SaveChangesAsync();
 
-        // POST api/servers
-        [HttpPost]
-        public ActionResult Post(Servers server)
-        {
-            ServersList.Add(server);
-            return CreatedAtAction(actionName: "GetServerID", new
-            {
-                ServerId = server.ServerId,
-                //ServerURL
-            //= server.ServerURL
-            },
-                server);
+            return servers;
         }
 
-        // DELETE api/servers/7
-        [HttpDelete("{ServerId}")]
-        public string Delete(string id)
+        private bool ServersExists(string id)
         {
-            Servers s = ServersList.Where(x => x.ServerId == id).Single<Servers>();
-            ServersList.Remove(s);
-            return "Record has successfully Deleted";
+            return _context.ServersDB.Any(e => e.ServerId == id);
         }
-
     }
 }
