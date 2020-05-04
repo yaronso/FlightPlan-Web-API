@@ -15,6 +15,5 @@ namespace FlightControlWeb.Data
         }
 
         public DbSet<Flight> Flights { get; set; }
-
     }
 }

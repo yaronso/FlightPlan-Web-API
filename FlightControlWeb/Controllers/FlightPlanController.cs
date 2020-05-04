@@ -14,6 +14,7 @@ namespace FlightControlWeb.Controllers
     public class FlightPlanController : ControllerBase
     {
         private readonly FlightPlanContext _context;
+        
 
         // CTR
         public FlightPlanController(FlightPlanContext context)
@@ -49,7 +50,7 @@ namespace FlightControlWeb.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFlightPlan(string id, FlightPlan flightPlan)
         {
-            if (id != flightPlan.FlightPlanID)
+            if (id != flightPlan.flightPlanID)
             {
                 return BadRequest();
             }
@@ -81,14 +82,16 @@ namespace FlightControlWeb.Controllers
         [HttpPost]
         public async Task<ActionResult<FlightPlan>> PostFlightPlan(FlightPlan flightPlan)
         {
+            flightPlan.flightPlanID = "default";
             _context.FpDB.Add(flightPlan);
             try
             {
                 await _context.SaveChangesAsync();
             }
+            
             catch (DbUpdateException)
             {
-                if (FlightPlanExists(flightPlan.FlightPlanID))
+                if (FlightPlanExists(flightPlan.flightPlanID))
                 {
                     return Conflict();
                 }
@@ -98,7 +101,7 @@ namespace FlightControlWeb.Controllers
                 }
             }
 
-            return CreatedAtAction("GetFlightPlan", new { id = flightPlan.FlightPlanID }, flightPlan);
+            return CreatedAtAction("GetFlightPlan", new { id = flightPlan.flightPlanID }, flightPlan);
         }
 
         // DELETE: api/FlightPlan/5
@@ -119,7 +122,7 @@ namespace FlightControlWeb.Controllers
 
         private bool FlightPlanExists(string id)
         {
-            return _context.FpDB.Any(e => e.FlightPlanID == id);
+            return _context.FpDB.Any(e => e.flightPlanID == id);
         }
     }
 }

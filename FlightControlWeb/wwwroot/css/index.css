@@ -1,0 +1,276 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+h1 {
+    color: dodgerblue;
+    text-align: center;
+    
+    
+}
+
+footer {
+    text-align: center;
+    font-size: 85%;
+    color: black;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+.win {
+    background-image: url(window.jpeg);
+    text-align: center;
+    width: 1000px;
+    height: 205px;
+    margin-left: 150px;
+    margin-right: 150px;
+    position: absolute;
+    top: 590px;
+    right: -113px;
+}
+
+.sky {
+    background: url(sunset.jpeg);
+    text-align: center;
+    width: 1000px;
+    height: 184px;
+    margin-left: 150px;
+    margin-right: 150px;
+    position: absolute;
+    top: 800px;
+    right: -113px;
+    animation: driving 10s linear infinite;
+}
+
+@keyframes driving {
+    from {
+        background-position: bottom right;
+    }
+    to {
+        background-position: bottom left;
+    }
+}
+
+table {
+    background-image: url(window.jpeg);
+    text-align: center;
+    width: 1000px;
+    height: 205px;
+    margin-left: 150px;
+    margin-right: 150px;
+}
+
+.container {
+    width: 1075px;
+    height: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #FFF;
+    padding-left: 40px;
+    padding-right: 40px;
+    position: relative;
+    padding-top: 20px;
+    box-sizing: border-box;
+}
+
+.map-responsive {
+    overflow: hidden;
+    padding-bottom: 63%;
+    position: relative;
+    height: 0;
+}
+
+    .map-responsive iframe {
+        left: 10px;
+        top: 13px;
+        height: 100%;
+        width: 90%;
+        position: absolute;
+    }
+
+.sidebar {
+    width: 34%;
+    float: left;    
+    padding: 20px 40px;
+    box-sizing: border-box;
+    font-size: 85%;
+}
+
+.mainArea {
+    width: 75%;
+    height: 75%;
+    float: left;
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.content-area {
+    border-top: 3px solid #e5e9dc;
+    /*border-bottom: 3px solid #e5e9dc;*/   
+}
+
+.fix {
+    clear: both;
+}
+
+
+.myFlight {
+    background-color: lightskyblue;
+    padding: 30px;
+    border: 3px solid black;
+    margin-left: 70px;
+    margin-right: 70px;
+    margin-bottom: 200px;
+    margin-top: 20px;
+    width: 250px;
+    height: 150px;
+    position: absolute;
+    top: 130px;
+    right: -32px;
+}
+
+.flightId {
+    position: relative;
+    top: 120px;
+    left: 170px;
+    color: black;
+    font-weight: bold;
+}
+.valId {
+    position: relative;
+    top: 140px;
+    left: 190px;
+    color: black;
+    font-weight: bold;
+    
+}
+
+.flightTime {
+    position: relative;
+    top: 100px;
+    left: 250px;
+    color: black;
+    font-weight: bold;
+}
+.valTime {
+    position: relative;
+    top: 110px;
+    left: 290px;
+    color: black;
+    font-weight: bold;
+    
+}
+
+
+
+.externalFlights {
+    background-color: navajowhite;
+    padding: 30px;
+    border: 3px solid black;
+    margin-bottom: 20px;
+    width: 250px;
+    height: 150px;
+    position: absolute;
+    top: 370px;
+    right: 37px;
+}
+
+
+header {
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.group:before,
+.group:after {
+    content: "";
+    display: table;
+}
+
+.group:after {
+    clear: both;
+}
+
+.group {
+    zoom: 1;
+}
+
+#drop_zone {
+    border: 5px solid blue;
+    width: 200px;
+    height: 100px;
+}
+
+
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+    
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+    
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    font-size: 14px;
+    
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+  background-color: cornflowerblue
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+  font-family: Tahoma, sans-serif;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px; /* Vertically center the text there */
+}

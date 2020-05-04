@@ -8,6 +8,7 @@ using FlightControlWeb.Data;
 using FlightControlWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightControlWeb.Controllers
 {
@@ -29,10 +30,10 @@ namespace FlightControlWeb.Controllers
 
         // GET: api/Flights
         [HttpGet]        
-        public  IEnumerable<Flight> Get()
+        public async Task<ActionResult<IEnumerable<Flight>>> Get()
         {
             //return flightDbContext.Flights.Where(m=>m.ParseDateTime(m.flight_id) > ParseDateTime(date));
-            return flightDbContext.Flights;
+            return await flightDbContext.Flights.ToListAsync();
         }
 
         [HttpGet("{date}", Name = "Get")]

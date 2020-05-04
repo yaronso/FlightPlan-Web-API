@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace FlightControlWeb.Models
 {
     [Owned]
     public class InitialLocation 
       {
-           public int Id { get; set; }   // <----- id for the DB context
+           //public int Id { get; set; }   // <----- id for the DB context
            public double longitude { get; set; }
            public double latitude { get; set; }
            public DateTime date_time { get; set; }
@@ -19,7 +20,7 @@ namespace FlightControlWeb.Models
     [Owned]
     public class Segment
     {
-        public int Id  { get; set ; }   // <----- id - for the DB context
+        //public int Id  { get; set ; }   // <----- id - for the DB context
         public double longitude { get; set; }
         public double latitude { get; set; }
         public int timespan_seconds { get; set; }
@@ -29,8 +30,9 @@ namespace FlightControlWeb.Models
     public class FlightPlan
     {
         // TODO - verify about FlightPlanID
-        
-        public string FlightPlanID { get; set; }
+
+        [JsonProperty(PropertyName = "flightPlanID", Required = Required.Default)]
+        public string flightPlanID { get; set; }
         public int passengers { get; set; }
         public string company_name { get; set; }
         [Key]
