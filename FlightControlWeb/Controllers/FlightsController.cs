@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -16,31 +17,33 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightsController : ControllerBase
     {
-        FlightsDbContext flightDbContext;
+        // The flights manager.
+        IFlightManager manager = new FlightManager();
         string format = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         CultureInfo provider = CultureInfo.InvariantCulture;
 
-
-        public FlightsController(FlightsDbContext _FlightsDbContext)
-        {
-            this.flightDbContext = _FlightsDbContext;
-            
-        }
-
-
         // GET: api/Flights
         [HttpGet]        
-        public async Task<ActionResult<IEnumerable<Flight>>> Get()
+        public IEnumerable<Flight> GetAllFlight()
         {
-            //return flightDbContext.Flights.Where(m=>m.ParseDateTime(m.flight_id) > ParseDateTime(date));
-            return await flightDbContext.Flights.ToListAsync();
+            return manager.GetAllFlights();
         }
 
         [HttpGet("{date}", Name = "Get")]
         public IEnumerable<Flight> Get(string date)
         {
-            return flightDbContext.Flights.Where
-                (m => m.date_time < ParseDateTime(date));
+           // get the flight dictionary
+           ConcurrentDictionary<string, Flight> FlightsDic = manager.getDic();
+           DateTime dateTime = ParseDateTime(date);
+           List<Flight> list = new List<Flight>();
+           foreach (var keyValuePair in FlightsDic)
+           {
+                if(keyValuePair.Value.date_time < dateTime)
+                {
+                    list.Add(keyValuePair.Value);
+                }
+           }
+           return list;
         }
 
         /*
@@ -59,30 +62,16 @@ namespace FlightControlWeb.Controllers
 
         // POST: api/Flights
         [HttpPost]
-        public IActionResult Post([FromBody] Flight f)
+        public void Post([FromBody] Flight f)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            flightDbContext.Flights.Add(f);
-            //flightDbContext.SaveChangesAsync
-            flightDbContext.SaveChanges(true);
-            return StatusCode(StatusCodes.Status201Created);
-        } 
+            manager.AddFlight(f);
+        }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public void DeleteFlight(string id)
         {
-            var flight = flightDbContext.Flights.Find(id);
-            if (flight == null)
-            {
-                return NotFound("No Record Found");
-            }
-            flightDbContext.Flights.Remove(flight);
-            flightDbContext.SaveChanges(true);
-            return Ok("Flight Deleted"); 
+            manager.DeleteFlight(id);
         }
 
         private DateTime ParseDateTime(string d)
@@ -92,7 +81,6 @@ namespace FlightControlWeb.Controllers
             Debug.WriteLine(res.ToString());
             return res;
         }
-
      
     }
 }

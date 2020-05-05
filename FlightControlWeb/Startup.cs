@@ -35,21 +35,12 @@ namespace FlightControlWeb
         public void ConfigureServices(IServiceCollection services)
         {
              services.AddControllers();
-            services.AddDbContext<FlightsDbContext>(option => option.UseInMemoryDatabase("Flights List"));
-            // Add the Flight Plans DB.
-            services.AddDbContext<FlightPlanContext>(opt =>
-            opt.UseInMemoryDatabase("FlightPlan List"));
-            // Add the Servers DB.
-            services.AddDbContext<ServersContext>(opt =>
-            opt.UseInMemoryDatabase("Servers List"));
-
-
-
+ 
             //services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, FlightsDbContext flightsDbContext)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseFileServer();
             if (env.IsDevelopment())
@@ -57,7 +48,6 @@ namespace FlightControlWeb
                 app.UseDeveloperExceptionPage();
             }
             //app.UseMvc();
-            flightsDbContext.Database.EnsureCreated();
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
