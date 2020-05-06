@@ -10,7 +10,7 @@ namespace FlightControlWeb.Data
 {
     public class FlightPlanManager : IFlightPlanManager
     {
-        private static ConcurrentDictionary<string, FlightPlan> FlightPlansDic
+        public static ConcurrentDictionary<string, FlightPlan> FlightPlansDic
        = new ConcurrentDictionary<string, FlightPlan>();
 
         public void AddFlightPlan(FlightPlan fp)

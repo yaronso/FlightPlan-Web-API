@@ -18,7 +18,7 @@ namespace FlightControlWeb.Controllers
     public class FlightsController : ControllerBase
     {
         // The flights manager.
-        IFlightManager manager = new FlightManager();
+        IFlightManager managerFlight = new FlightManager();
         string format = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         CultureInfo provider = CultureInfo.InvariantCulture;
 
@@ -26,19 +26,21 @@ namespace FlightControlWeb.Controllers
         [HttpGet]        
         public IEnumerable<Flight> GetAllFlight()
         {
-            return manager.GetAllFlights();
+            return managerFlight.GetAllFlights();
         }
 
         [HttpGet("{date}", Name = "Get")]
         public IEnumerable<Flight> Get(string date)
         {
            // get the flight dictionary
-           ConcurrentDictionary<string, Flight> FlightsDic = manager.getDic();
+           ConcurrentDictionary<string, Flight> FlightsDic = managerFlight.getDic();
            DateTime dateTime = ParseDateTime(date);
            List<Flight> list = new List<Flight>();
            foreach (var keyValuePair in FlightsDic)
            {
-                if(keyValuePair.Value.date_time < dateTime)
+                if (keyValuePair.Value.date_time <= dateTime && 
+                    keyValuePair.Value.landing_time >= dateTime &&
+                    keyValuePair.Value.is_external == false)
                 {
                     list.Add(keyValuePair.Value);
                 }
@@ -64,14 +66,14 @@ namespace FlightControlWeb.Controllers
         [HttpPost]
         public void Post([FromBody] Flight f)
         {
-            manager.AddFlight(f);
+            managerFlight.AddFlight(f);
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void DeleteFlight(string id)
         {
-            manager.DeleteFlight(id);
+            managerFlight.DeleteFlight(id);
         }
 
         private DateTime ParseDateTime(string d)

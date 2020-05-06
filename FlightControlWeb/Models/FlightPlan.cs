@@ -21,7 +21,7 @@ namespace FlightControlWeb.Models
     {
         public double longitude { get; set; }
         public double latitude { get; set; }
-        public int timespan_seconds { get; set; }
+        public double timespan_seconds { get; set; }
      }
 
     // https://www.jsonutils.com/
@@ -35,8 +35,7 @@ namespace FlightControlWeb.Models
         [Key]
         public InitialLocation initial_location { get; set; }
         [Key]
-        public IList<Segment> seg { get; set; }   // segments: lon, lat, time per sec, etc.
-    }
-
+        public IList<Segment> segments { get; set; }   // segments: lon, lat, time per sec, etc.
+    }   
     
 }
