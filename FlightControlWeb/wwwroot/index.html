@@ -19,6 +19,9 @@
 </head>
 
 <body>
+    <div class="file-upload-wrapper">
+        <input type="file" id="input-file-max-fs" class="file-upload" data-max-file-size="2M" />
+    </div>
 
     <div class="container">
         <header>
@@ -39,11 +42,13 @@
             <aside class="sidebar">
                 <div class="myFlight">
 
-                    <h3> <em>My Flights</em> </h3>
-                    <ul>
-                        <li>f1</li>
-                        <li>f2</li>
-                        <li>...</li>
+                    <h3>
+                        <em>My Flights</em>
+                    </h3>
+                    <ul id="flightsUL">
+                        <li><a href="#"></a></li>
+                        <li><a href="#"></a></li>
+                        <li><a href="#"></a></li>
 
                     </ul>
 
@@ -52,101 +57,47 @@
 
                     <h3> <em>External Flights</em> </h3>
                     <ul>
-                        <li>f1</li>
-                        <li>f2</li>
-                        <li>...</li>
+                        <li><a href="#1"> f1 </a></li>
+                        <li><a href="#1"> f2</a></li>
+                        <li><a href="#1"> f3 </a></li>
 
                     </ul>
 
                 </div>
 
             </aside>
-            <!--
-    <div class="flightId">
-        Flight Id:
-
-    </div>
-    <div class="valId">
-        35
-    </div>
-    <div class="flightTime">
-        Flight Time:
-
-    </div>
-    <div class="valTime">
-        5654
-    </div>
-        -->
             <div class="win">
                 parameter
             </div>
 
             <div class="sky">
-                
+
                 <img src="css/giphy.gif" />
             </div>
-
-
-
-
-
-
-
         </div>
 
 
     </div>
     <footer>
-
         <p>Copyright: &copy 2020</p>
-
     </footer>
+
+
+    <script src="lib/jquery/dist/jquery.js"></script>
+    <script>
+        var productsUrl = "/api/FlightPlan";
+        $.getJSON(productsUrl, function (data) {
+            data.forEach(function (FlightPlan) {
+                $("#flightsUL").append('<a href="#">', FlightPlan.flightPlanID, '<br>');
+
+            });
+        });
+    </script>
+
+
 </body>
-
-    </html>
-
+ </html>
 
 
-    <!--
-    <table>
-        <thead>
-            <tr>
-                <th>parameter</th>
-            </tr>
-        </thead>
 
-        <tbody>
-            <tr>
 
-                <td>Flight Id:</td>
-                <td>3</td>
-
-            </tr>
-            <tr>
-                <td>Flight Time:</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>Company</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>Starting Location:</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>Destination:</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>Landing Time:</td>
-                <td>304</td>
-            </tr>
-            <tr>
-                <td>Number of Passengers:</td>
-                <td>3</td>
-            </tr>
-        </tbody>
-
-    </table>
-        -->

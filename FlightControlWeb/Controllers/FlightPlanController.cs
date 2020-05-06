@@ -54,11 +54,11 @@ namespace FlightControlWeb.Controllers
             }
 
             DateTime landing = new DateTime();
-            landing = fp.initial_location.date_time.AddSeconds(end);
-            Debug.WriteLine(landing);
+            landing = fp.initial_location.date_time.AddSeconds(end);            
             flight.landing_time = landing;
             FlightManager.FlightsDic.TryAdd(flight.flight_id, flight);
             managerFlightPlan.AddFlightPlan(fp);
+            
         }
 
         private string RandomString()

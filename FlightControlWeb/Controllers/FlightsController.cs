@@ -42,6 +42,7 @@ namespace FlightControlWeb.Controllers
                     keyValuePair.Value.landing_time >= dateTime &&
                     keyValuePair.Value.is_external == false)
                 {
+                    Interpolation(keyValuePair.Value, dateTime);
                     list.Add(keyValuePair.Value);
                 }
            }
@@ -83,6 +84,68 @@ namespace FlightControlWeb.Controllers
             Debug.WriteLine(res.ToString());
             return res;
         }
-     
+
+        private void Interpolation(Flight flight, DateTime date)
+        {
+            int i = 0;
+            DateTime init_date = FlightPlanManager.FlightPlansDic[flight.flight_id].
+                initial_location.date_time;
+         
+            IList<Segment> segments = FlightPlanManager.FlightPlansDic[flight.flight_id].segments;
+            DateTime new_date_seg = init_date.AddSeconds(segments[i].timespan_seconds);
+
+            while (!(new_date_seg > date && date > init_date))
+            {
+                i++;
+                init_date = new_date_seg;
+                DateTime refresh_Seg = new_date_seg.AddSeconds(segments[i].timespan_seconds);
+                new_date_seg = refresh_Seg;
+            }
+
+            // starting point (condition i = 0) the previus location
+            double start_lon, start_lat, end_lon, end_lat;
+
+            if (i == 0)
+            {
+                start_lon = FlightPlanManager.FlightPlansDic[flight.flight_id].
+                 initial_location.longitude;
+
+                start_lat = FlightPlanManager.FlightPlansDic[flight.flight_id].
+                initial_location.latitude;
+
+                double diffInSeconds = (date - init_date).TotalSeconds;
+                double prop = diffInSeconds / segments[i].timespan_seconds;
+                end_lon = start_lon + (segments[i].longitude - start_lon) * prop;
+                end_lat = start_lat + (segments[i].latitude - start_lat) * prop;
+
+            }
+            else
+            {
+
+                start_lon = segments[i - 1].longitude;
+                start_lat = segments[i - 1].latitude;
+
+                double end = 0;
+
+                for (int j = 0; j < i; j++)
+                {
+                    end += segments[j].timespan_seconds;
+                }
+
+                DateTime init = FlightPlanManager.FlightPlansDic[flight.flight_id].
+                initial_location.date_time.AddSeconds(end);
+
+                double diffInSeconds = (date - init).TotalSeconds;
+
+                double prop = diffInSeconds / segments[i].timespan_seconds;
+                end_lon = start_lon + (segments[i].longitude - start_lon) * prop;
+                end_lat = start_lat + (segments[i].latitude - start_lat) * prop;
+
+            }
+
+            flight.longtitude = end_lon;
+            flight.latitude = end_lat;           
+            
+        }        
     }
 }
