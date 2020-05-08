@@ -37,19 +37,23 @@
         <div class="content-area group">
 
             <div class="mainArea">
-
-                <div class="map-responsive" >
+                <div class="map-responsive">
                     <p>
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d242976.31288304552!2d34.82390375608268!3d32.03403526880211!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sil!4v1588328808997!5m2!1sen!2sil" width="550" height="850" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                        <!-- The Map Frame -->
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d242976.31288304552!2d34.82390375608268!3d32.03403526880211!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sil!4v1588328808997!5m2!1sen!2sil"
+                                width="550" height="850" frameborder="0" style="border:0;" allowfullscreen=""
+                                aria-hidden="false" tabindex="0">
+                        </iframe>
                     </p>
                 </div>
 
             </div>
 
+            <!--  Side Bars: My Flights & External Flights -->
             <aside class="sidebar">
                 <div class="myFlight">
                     <h3>
-                    <em>My Flights</em>
+                        <em>My Flights</em>
                     </h3>
                     <ul>
                         <li><a href="#1"> f1 </a></li>
@@ -59,8 +63,8 @@
                 </div>
 
                 <div class="externalFlights">
-                    <h3> 
-                    <em>External Flights</em>
+                    <h3>
+                        <em>External Flights</em>
                     </h3>
                     <ul>
                         <li><a href="#1"> f1 </a></li>
@@ -90,7 +94,9 @@
 
 
     <script src="js/indexJavaScript.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARdYJHkpACoEVbNC-aUJbPI-Su_KvNPFk&callback=initMap"></script>
+        <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
