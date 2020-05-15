@@ -6,6 +6,43 @@ var mark = function (pin, id) {
     this.id = id;
 };
 
+var marker, map;
+
+function myMap() {
+    var mapProp = {
+        center: new google.maps.LatLng(34, 32),
+        zoom: 5,
+    };
+    map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+
+
+    marker = new google.maps.Marker({
+        position: new google.maps.LatLng(34, 32),
+        icon: 'css/NOTactiveAP.png'
+    });
+
+    marker.setMap(map);
+
+
+}
+
+/*
+document.getElementById('btn').addEventListener('click', function () {
+    var mapProp = {
+        center: new google.maps.LatLng(34, 32),
+        zoom: 5,
+    };
+   var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+   var marker = ({
+        
+        icon: 'css/activeAP.png'
+    });
+
+    marker.setMap(map);
+  
+});*/
+
 // markersArr
 var markers = {
     start: '',

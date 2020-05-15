@@ -4,7 +4,7 @@
     <TITLE>Flights Control</TITLE>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="photos/app_icon.png">
+    <link rel="icon" href="photos/app_icon.png">    
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <style>
@@ -36,6 +36,7 @@
             float: left;
             width: 75%;
         }
+
 
         /* Right column */
         .rightArea {
@@ -105,12 +106,11 @@
             <!-- THE MAP CARD-->
             <div class="card">
                 <h1 style="text-align: center">Map</h1>
-                <div id="map"></div>
-                <script src="js/indexJavaScript.js">
-                </script>
-                <script async defer
-                        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0MdOxn6PqHrjcgtpxu3dqeAbKk-WVnTc&callback=initMap">
-                </script>
+                <div id="map">
+                    <script async defer
+                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0MdOxn6PqHrjcgtpxu3dqeAbKk-WVnTc&callback=initMap">
+                    </script>
+                </div>
             </div>
 
             <!--The Flight Details under the Map CARD-->
@@ -119,22 +119,22 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Flight ID</th>
                             <th>Company</th>
-                            <th>Take Off</th>
-                            <th>From</th>
-                            <th>To</th>
                             <th>Passengers</th>
+                            <th>Take Off</th>
+                            <th>Landing Time</th>
+                            <th>Starting Point</th>
+                            <th>Ending Point</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>BKS123</td>
-                            <td>Swiss</td>
-                            <td>DD/MM/YY</td>
-                            <td>Israel</td>
-                            <td>Berlin</td>
-                            <td>212</td>
+                            <td id="Company"></td>
+                            <td id="Passengers"></td>
+                            <td id="TakeOff"></td>
+                            <td id="Landing"></td>
+                            <td id="Start"></td>
+                            <td id="End"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -149,44 +149,94 @@
                 <h2 id="time" style="text-align:center"></h2>
             </div>
             <div class="card">
-                <h2 >My Flights</h2>
+                <h3>My Flights</h3>
+                <!--
+            <div id="flightTable" style="width:100%">
+                <h4>Flight ID            Company Name</h4>
+
+            </div>
+            -->
                 <table id="flightTable" style="width:100%">
                     <tr>
                         <th>Flight ID</th>
-                        <th>Company Name</th>
+                        <th>Company</th>
+                        <th></th>
+                        <th></th>
                     </tr>
 
+
                 </table>
+
             </div>
 
             <div class="card">
-                <h3 >External Flights</h3>
+                <h3>External Flights</h3>
+
                 <table id="extFlightTable" style="width:100%">
                     <tr>
                         <th>Flight ID</th>
                         <th>Company Name</th>
                     </tr>
+
+
+
+
                 </table>
 
             </div>
 
+            <!-- The card of the upload button-->
+            <div class="card">
+                <input id="contentFile" type="file" accept="application/json" />
+            </div>
+
+            <script>
+                document.getElementById('contentFile').onchange = function (evt) {
+                    try {
+                        let files = evt.target.files;
+                        if (!files.length) {
+                            alert('No file selected!');
+                            return;
+                        }
+                        let file = files[0];
+                        let reader = new FileReader();
+                        const self = this;
+                        var fp;
+                        reader.onload = (event) => {
+                            fp = event.target.result;
+                            // Creating a XHR object
+                            let xhr = new XMLHttpRequest();
+                            let url = "/api/FlightPlan";
+                            // open a connection
+                            xhr.open("POST", url, true);
+                            // Set the request header i.e. which type of content you are sending
+                            xhr.setRequestHeader("Content-Type", "application/json");
+                            xhr.send(fp);
+                        };
+                        reader.readAsText(file);
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+            </script>
         </div>
 
-    </div>
-
-    <div class="footer">
-        <h4>Flights Control ®</h4>
-        <h6>Devoloped By Liad Cohen and Yaron Sofer </h6>
-    </div>
+        <div class="footer">
+            <h4>Flights Control ®</h4>
+            <h6>Devoloped By Liad Cohen and Yaron Sofer </h6>
+        </div>
 
 
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        <script src="js/update.js">
+        </script>        
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </body>
+
 </html>
 

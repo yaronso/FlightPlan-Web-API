@@ -34,7 +34,8 @@ namespace FlightControlWeb.Controllers
         }
         // POST: api/FlightPlan/6
         [HttpPost]
-        public void Post([FromBody] FlightPlan fp)
+        //public void Post([FromBody] FlightPlan fp)
+        public void Post(FlightPlan fp)
         {
             string id = this.RandomString();
             fp.flightPlanID = id;
@@ -42,20 +43,28 @@ namespace FlightControlWeb.Controllers
             flight.flight_id = id;
             flight.passengers = fp.passengers;
             flight.company_name = fp.company_name;
+            flight.starting_time = fp.initial_location.date_time;
+            flight.starting_datails = fp.initial_location.date_time.ToString("dd-MM-yyyy");
+            flight.initial_location = "Lat: " + fp.initial_location.latitude.ToString() + "  Lon: " + fp
+                .initial_location.longitude.ToString();
             flight.date_time = fp.initial_location.date_time;
-            flight.longtitude = fp.initial_location.longitude;
+            flight.longitude = fp.initial_location.longitude;
             flight.latitude = fp.initial_location.latitude;
             flight.is_external = false;
             double end = 0;
-          
-            for (int i = 0; i < fp.segments.Count; i++)
+
+            int i;
+            for (i = 0; i < fp.segments.Count; i++)
             {
                 end += fp.segments[i].timespan_seconds;
             }
 
+            flight.final_location = "Lat: " + fp.segments[i-1].latitude.ToString() + "  Lon: " + 
+                fp.segments[i - 1].longitude.ToString();
             DateTime landing = new DateTime();
             landing = fp.initial_location.date_time.AddSeconds(end);            
             flight.landing_time = landing;
+            flight.landing_details = landing.ToString("dd-MM-yyyy");
             FlightManager.FlightsDic.TryAdd(flight.flight_id, flight);
             managerFlightPlan.AddFlightPlan(fp);
             

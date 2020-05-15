@@ -23,18 +23,24 @@ namespace FlightControlWeb.Controllers
         CultureInfo provider = CultureInfo.InvariantCulture;
 
         // GET: api/Flights
+        /*
         [HttpGet]        
         public IEnumerable<Flight> GetAllFlight()
         {
             return managerFlight.GetAllFlights();
-        }
+        }*/
 
-        [HttpGet("{date}", Name = "Get")]
-        public IEnumerable<Flight> Get(string date)
+
+
+        //[HttpGet("{date}", Name = "Get")]
+
+        [HttpGet]
+        public  IEnumerable<Flight> Get()
         {
-           // get the flight dictionary
-           ConcurrentDictionary<string, Flight> FlightsDic = managerFlight.getDic();
-           DateTime dateTime = ParseDateTime(date);
+           string relative_to = Request.Query["relative_to"].ToString();
+            // get the flight dictionary
+            ConcurrentDictionary<string, Flight> FlightsDic = managerFlight.getDic();
+           DateTime dateTime = ParseDateTime(relative_to);
            List<Flight> list = new List<Flight>();
            foreach (var keyValuePair in FlightsDic)
            {
@@ -94,7 +100,7 @@ namespace FlightControlWeb.Controllers
             IList<Segment> segments = FlightPlanManager.FlightPlansDic[flight.flight_id].segments;
             DateTime new_date_seg = init_date.AddSeconds(segments[i].timespan_seconds);
 
-            while (!(new_date_seg > date && date > init_date))
+            while (!(new_date_seg > date && date >= init_date))
             {
                 i++;
                 init_date = new_date_seg;
@@ -143,7 +149,7 @@ namespace FlightControlWeb.Controllers
 
             }
 
-            flight.longtitude = end_lon;
+            flight.longitude = end_lon;
             flight.latitude = end_lat;           
             
         }        

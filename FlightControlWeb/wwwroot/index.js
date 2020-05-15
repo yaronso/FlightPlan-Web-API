@@ -1,0 +1,2 @@
+﻿var myValue = "<%= MyProperty %>";
+myValue.
