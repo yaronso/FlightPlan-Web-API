@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FlightControlWeb.Data;
 using FlightControlWeb.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace FlightControlWeb.Controllers
 {
@@ -34,26 +36,95 @@ namespace FlightControlWeb.Controllers
 
         //[HttpGet("{date}", Name = "Get")]
 
-        [HttpGet]
-        public  IEnumerable<Flight> Get()
+        
+    [HttpGet]
+    public  IEnumerable<Flight> Get()
+    {
+       string relative_to = Request.Query["relative_to"].ToString();
+        // get the flight dictionary
+        ConcurrentDictionary<string, Flight> FlightsDic = managerFlight.getDic();
+       DateTime dateTime = ParseDateTime(relative_to);
+       List<Flight> list = new List<Flight>();
+       foreach (var keyValuePair in FlightsDic)
+       {
+            if (keyValuePair.Value.date_time <= dateTime && 
+                keyValuePair.Value.landing_time >= dateTime &&
+                keyValuePair.Value.is_external == false)
+            {
+                Interpolation(keyValuePair.Value, dateTime);
+                list.Add(keyValuePair.Value);
+            }
+       }
+       return list;
+    }
+
+        [HttpGet("{sync_all?}")]
+        public async Task<List<Flight>> Get([FromQuery] string relative_to, [FromQuery]string? sync_all)
         {
-           string relative_to = Request.Query["relative_to"].ToString();
+            //string relative_to = Request.Query["relative_to"].ToString();
             // get the flight dictionary
             ConcurrentDictionary<string, Flight> FlightsDic = managerFlight.getDic();
-           DateTime dateTime = ParseDateTime(relative_to);
-           List<Flight> list = new List<Flight>();
-           foreach (var keyValuePair in FlightsDic)
-           {
-                if (keyValuePair.Value.date_time <= dateTime && 
+            DateTime dateTime = ParseDateTime(relative_to);
+            List<Flight> list = new List<Flight>();
+            foreach (var keyValuePair in FlightsDic)
+            {
+                if (keyValuePair.Value.date_time <= dateTime &&
                     keyValuePair.Value.landing_time >= dateTime &&
                     keyValuePair.Value.is_external == false)
                 {
                     Interpolation(keyValuePair.Value, dateTime);
                     list.Add(keyValuePair.Value);
                 }
-           }
-           return list;
+            }
+
+            if (Request.QueryString.Value.Contains("sync_all"))
+            {
+                string url;                
+                List<Flight> exFlights = new List<Flight>();
+                foreach (var keyValuePair in ServerManager.ServersDic)
+                {
+                    url = keyValuePair.Value.ServerURL;
+                    url = url + "/api/Flights?relative_to=" + DateTime.Now.ToString(format);
+                    using (var client = new HttpClient())
+                    {
+                        var content = await client.GetStringAsync(url);
+                        exFlights = JsonConvert.DeserializeObject<List<Flight>>(content);
+                        await getFlightPlansFromExServerAsync(exFlights, keyValuePair.Value.ServerURL);
+                        list.AddRange(exFlights);
+
+                    }
+
+                }
+
+                
+            }
+
+            return list;
         }
+
+        private async Task getFlightPlansFromExServerAsync(List<Flight> exFlights , string ur)
+        {
+            string url = ur + "/api/FlightPlan/";
+            FlightPlan fp = new FlightPlan();
+            var client = new HttpClient();                        
+
+            foreach (var flight in exFlights)
+            {
+                flight.is_external = true;
+                url = url + flight.flight_id;
+                var content = await client.GetStringAsync(url);
+                fp = JsonConvert.DeserializeObject<FlightPlan>(content);
+                fp.flightPlanID = flight.flight_id;
+                FlightPlanManager.FlightPlansDic.TryAdd(fp.flightPlanID,fp);               
+
+            }
+
+        }
+
+
+
+
+
 
         /*
         // GET: api/Flights/5

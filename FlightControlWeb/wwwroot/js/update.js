@@ -206,6 +206,15 @@ function updateStatus(flight) {
 }
 
 function clickOnMap(flight) {
+
+    for (var i = 0; i < tableId.length; i++) {
+        if (flight.flight_id != tableId[i]) {
+            var p = mapOfPaths.get(tableId[i]);
+            if (p != null) {
+                p.setMap(null);
+            }
+        }
+    }
     removeDetails(flight);
     var flightRow = mapOfMyFlights.get(flight.flight_id);
     flightRow.style.backgroundColor = "";

@@ -14,6 +14,7 @@ namespace FlightControlWeb.Controllers
     public class ServersController : ControllerBase
     {
         IServer manager = new ServerManager();
+        private static Random random = new Random();
 
         // GET: api/servers
         [HttpGet]
@@ -26,6 +27,7 @@ namespace FlightControlWeb.Controllers
         [HttpPost]
         public void Post([FromBody] Servers s)
         {
+            s.ServerId = RandomId();            
             manager.AddServer(s);
         }
 
@@ -34,6 +36,17 @@ namespace FlightControlWeb.Controllers
         public void DeleteSer(string id)
         {
            manager.DeleteServer(id);
+        }
+
+        private string RandomId()
+        {            
+            const string charsNum = "0123456789";
+            string nums;           
+
+            nums = new string(Enumerable.Repeat(charsNum, 6)
+             .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            return nums;
         }
     }
 }

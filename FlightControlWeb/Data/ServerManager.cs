@@ -10,7 +10,7 @@ namespace FlightControlWeb.Data
     public class ServerManager : IServer
     {
         // The servers dictionary
-        private static ConcurrentDictionary<string, Servers> ServersDic
+        public static ConcurrentDictionary<string, Servers> ServersDic
         = new ConcurrentDictionary<string, Servers>();
         public void AddServer(Servers s)
         {
