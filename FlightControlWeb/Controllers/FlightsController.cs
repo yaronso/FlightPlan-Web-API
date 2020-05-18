@@ -36,7 +36,7 @@ namespace FlightControlWeb.Controllers
 
         //[HttpGet("{date}", Name = "Get")]
 
-        
+        /*
     [HttpGet]
     public  IEnumerable<Flight> Get()
     {
@@ -56,7 +56,7 @@ namespace FlightControlWeb.Controllers
             }
        }
        return list;
-    }
+    }*/
 
         [HttpGet("{sync_all?}")]
         public async Task<List<Flight>> Get([FromQuery] string relative_to, [FromQuery]string? sync_all)
