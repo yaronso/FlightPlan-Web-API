@@ -68,7 +68,7 @@ xhttp.onreadystatechange = function () {
             // Store the current flight
             currentFlight = new flight(obj.flight_id, obj.longitude, obj.latitude, obj.passengers, obj.final_location, obj.starting_datails, obj.initial_location, obj.landing_details,
                 obj.company_name,
-                obj.date_time, obj.landing_time, obj.is_external);
+                obj.date_time, obj.is_external);
 
             console.log(words.length);
             console.log("cur lat " + currentFlight.latitude);            
@@ -263,6 +263,7 @@ function setFlightsTable(flight) {
         tableId.push(flight.flight_id);
 
         var listFlight;
+        
         if (flight.is_external == false) {
             listFlight = document.getElementById('flightTable');
         }
@@ -272,7 +273,7 @@ function setFlightsTable(flight) {
 
         
         // Check if the current flight is already exists in the fligts table.
-
+        let btn2;
         let tr = document.createElement("tr");
         let th1 = document.createElement("th");
         let th2 = document.createElement("th");
@@ -287,16 +288,18 @@ function setFlightsTable(flight) {
         btn.appendChild(document.createTextNode("press"));
         btn.style.background = "#8FBC8F";
         if (flight.is_external == false) {
-            let btn2 = document.createElement("button");
+            btn2 = document.createElement("button");
+            console.log("bool1 is " + flight.is_external);
             btn2.appendChild(document.createTextNode("delete"));
             btn2.style.background = "red";
         }
+        console.log("bool2 is " + flight.is_external);
 
         th1.appendChild(li);
         th2.appendChild(li2);
         th3.appendChild(btn);
         if (flight.is_external == false) {
-            th4.appendChild(btn2)
+            th4.appendChild(btn2)            
         }
         tr.appendChild(th1);
         tr.appendChild(th2);
