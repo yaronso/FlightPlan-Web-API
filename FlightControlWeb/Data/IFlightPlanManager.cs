@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FlightControlWeb.Data
 {
-    interface IFlightPlanManager
+    public interface IFlightPlanManager
     {
         IEnumerable<FlightPlan> GetAllFlightPlans();
         FlightPlan GetFlightPlanById(string id);

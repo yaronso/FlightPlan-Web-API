@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using FlightControlWeb.Controllers;
 
 namespace FlightControlWeb
 {
@@ -35,8 +36,9 @@ namespace FlightControlWeb
         public void ConfigureServices(IServiceCollection services)
         {
              services.AddControllers();
- 
-            //services.AddMvc();
+            services.AddSingleton(typeof(IFlightManager), typeof(FlightManager));
+            services.AddSingleton(typeof(IServer), typeof(ServerManager));
+            services.AddSingleton(typeof(IFlightPlanManager), typeof(FlightPlanManager));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +49,11 @@ namespace FlightControlWeb
             {
                 app.UseDeveloperExceptionPage();
             }
-            //app.UseMvc();
+
+
+
+
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
 

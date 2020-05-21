@@ -15,8 +15,14 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightPlanController : ControllerBase
     {
-        IFlightPlanManager managerFlightPlan = new FlightPlanManager();
+        //IFlightPlanManager managerFlightPlan = new FlightPlanManager();
+        IFlightPlanManager managerFlightPlan;
         private static Random random = new Random();
+
+        public FlightPlanController(IFlightPlanManager managerFP)
+        {
+            this.managerFlightPlan = managerFP;
+        }
 
         // GET: api/FlightPlan
         [HttpGet]
@@ -29,12 +35,16 @@ namespace FlightControlWeb.Controllers
         [HttpGet("{id}")]
         public FlightPlan GetFlightPlan(string id)
         {
+            FlightPlan fp = managerFlightPlan.GetFlightPlanById(id);
+            // Check if the flight plan is null.
+            if(fp == null)
+            {
+                throw new ArgumentException($"There is no Flight Plan with the id {id}", nameof(id));
+            }
             return managerFlightPlan.GetFlightPlanById(id);
-
         }
         // POST: api/FlightPlan/6
         [HttpPost]
-        //public void Post([FromBody] FlightPlan fp)
         public void Post(FlightPlan fp)
         {
             string id = this.RandomString();
@@ -43,7 +53,7 @@ namespace FlightControlWeb.Controllers
             flight.flight_id = id;
             flight.passengers = fp.passengers;
             flight.company_name = fp.company_name;
-            flight.starting_time = fp.initial_location.date_time;
+            ////flight.starting_time = fp.initial_location.date_time;
             flight.starting_datails = fp.initial_location.date_time.ToString("dd-MM-yyyy");
             flight.initial_location = "Lat: " + fp.initial_location.latitude.ToString() + "  Lon: " + fp
                 .initial_location.longitude.ToString();

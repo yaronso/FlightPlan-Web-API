@@ -6,43 +6,6 @@ var mark = function (pin, id) {
     this.id = id;
 };
 
-var marker, map;
-
-function myMap() {
-    var mapProp = {
-        center: new google.maps.LatLng(34, 32),
-        zoom: 5,
-    };
-    map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
-
-
-
-    marker = new google.maps.Marker({
-        position: new google.maps.LatLng(34, 32),
-        icon: 'css/NOTactiveAP.png'
-    });
-
-    marker.setMap(map);
-
-
-}
-
-/*
-document.getElementById('btn').addEventListener('click', function () {
-    var mapProp = {
-        center: new google.maps.LatLng(34, 32),
-        zoom: 5,
-    };
-   var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
-   var marker = ({
-        
-        icon: 'css/activeAP.png'
-    });
-
-    marker.setMap(map);
-  
-});*/
-
 // markersArr
 var markers = {
     start: '',
@@ -53,15 +16,36 @@ var markers = {
 
 // Initialize map
 function initMap() {
-    // map options - defines the properties for the map.
     var options = {
-        zoom: 3,
-        center: new google.maps.LatLng(32.3232919, 34.85538661),
-    };
-    // make a new map
-    var map = new google.maps.Map(document.getElementsByClassName("map-responsive"), options);
-    return map;
+        zoom: 2,
+        center: { lat: 42.236, lng: -71.056 }
+    }
+    map = new google.maps.Map(document.getElementById('map'), options);
+    // Call the date displaying function.
+    displayCurrDate();
 }
+
+// Display the current date.
+function displayCurrDate() {
+    var d = new Date();
+    var now = d.toLocaleString();
+    document.getElementById("time").innerHTML = now;
+}
+
+
+// Fullfil the 'My Flights Table' accroding to the input.
+var productsUrl = "/api/FlightPlan";
+$.getJSON(productsUrl, function (data) {
+        var table = document.getElementById('flightTable');
+        for (var i = 0; i < data.length; i++) {
+            var row = `<tr>
+                           <td>${data[i].flightPlanID}</td>
+                           <td>${data[i].company_name}</td>
+                       <tr>`
+            table.innerHTML += row
+        }
+});
+
 
     var productsUrl = "/api/FlightPlan";
     $.getJSON(productsUrl, function (data) {
@@ -73,11 +57,12 @@ function initMap() {
                 var element = data[key];
                 myFlights[key] = element;
                 countFlights++;
+                //alert("hi there " + myFlights[key].flightPlanID);
             }
         }
 
-        // store the map.
-        var map = initMap();
+       // store the map.
+       var map = initMap();
         // iterate again
         for (var j = 0; j < countFlights; j++) {
             //alert("Hey its a debug " + myFlights[j].initial_location.latitude);
@@ -85,23 +70,17 @@ function initMap() {
             var marker = new google.maps.Marker({
                 position: {
                     lat: myFlights[j].initial_location.latitude,
-                    lon: myFlights[j].initial_location.longitude
+                    lng: myFlights[j].initial_location.longitude
                 },
+               
                 icon: 'css/NOTactiveAP.png'
             });
 
             // set the marker to our map.
             marker.setMap(map);
+            alert("Setted the marker on the map");
             markers.markersArr.push(new mark(marker, myFlights[j].flightPlanID));
 
-            var infowindow = new google.maps.InfoWindow({
-                content: "Hello World!"
-            });
-            google.maps.event.addListener(marker, 'click', function () {
-                infowindow.open(map, marker);
-            });
-
-            alert("hey new map 4");
             // add the marker to the map
             marker.addListener('click', function () {
                 // set the marker icon to the following picture
@@ -111,12 +90,13 @@ function initMap() {
             });
         }
 
-        map.addListener('click', function () {
-            for (var i = 0; i < markers.markersArr.length; i++) {
-                // set the image of the marker to NOT active AP of the marker
-                markers.markersArr[i].pin.setIcon('css/NOTactiveAP.png');
-            }
-        });
+            /*map.addListener('click', function () {
+                for (var i = 0; i < markers.markersArr.length; i++) {
+                    // set the image of the marker to NOT active AP of the marker
+                    markers.markersArr[i].pin.setIcon('css/NOTactiveAP.png');
+                }
+            });*/
+        
 
     // End of getJSON reading data
     });

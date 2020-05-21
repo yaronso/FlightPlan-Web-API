@@ -53,6 +53,7 @@ function initMap() {
     map = new google.maps.Map(document.getElementById('map'), options);
 }
 
+var oldFlights = new Map();
 var flightsArr = [];
 var currentFlight;
 // Sampling the whole flights
@@ -70,40 +71,56 @@ xhttp.onreadystatechange = function () {
                 obj.company_name,
                 obj.date_time, obj.is_external);
 
-            console.log(words.length);
-            console.log("cur lat " + currentFlight.latitude);            
-            //console.log("cur lon " + currentFlight.longitude);
-            setFlightsTable(currentFlight);
-            flightsArr.push(currentFlight);
+            oldFlights.set(currentFlight.flight_id, currentFlight);
+            //console.log(words.length);
+            //console.log("cur lat " + currentFlight.latitude);
+
+
+            
+            //if ()
+
+           
+                setFlightsTable(currentFlight);
+                flightsArr.push(currentFlight);
             
 
+        }
 
-            /*
-            var isExist = false;
-            // Store the object in flights array
-            for (var i = 0; i < flights.flightsArr.length; i++)
-            {                
-                if (currentFlight.flight_id == flights.flightsArr[i].flight_id) {
-                    isExist = true;
-                    break;
+        
+        
+            for (var i = 0; i < tableId.length; i++) {
+
+                var id = tableId[i];
+                var isExist = false;     
+                
+                console.log("legth offfff: " + flightsArr.length);
+                console.log("legth of tableid: " + tableId.length);
+                for (var j = 0; j < flightsArr.length; j++) {
+                    
+                    //console.log("try the flight now");
+                    if (flightsArr[j].flight_id == id) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    
+                    if (oldFlights.get(id) != null) {
+                        var flightToDel = oldFlights.get(id);
+                        btn2Remove(flightToDel);
+                        console.log("del the flight: " + id);
+                        var d = tableId.indexOf(id);
+                        if (d >= 0) {
+                            console.log("in d");
+                            tableId.splice(d, 1);
+                        }
+                        //oldFlights.delete(id);
+                    }
+                    
                 }
             }
-            if (!isExist) {
-
-                console.log("middle lat " + currentFlight.latitude);
-               flights.flightsArr.push(currentFlight);
-               setFlightsTable(currentFlight);
-            }
-
-        }
         
-        if (flights.flightsArr.length != null) {
-
-            console.log("new lat " + currentFlight.latitude);
-            drawAirPlanes(flights.flightsArr);
-        }*/
-
-        }
+        
         
         drawAirPlanes(flightsArr);
     }
@@ -138,8 +155,7 @@ setInterval(function () {
 
    
 
-    var format = year + '-' + month + '-' + day + 'T' + h + ':' + m + ':' + s + 'Z';
-    
+    var format = year + '-' + month + '-' + day + 'T' + h + ':' + m + ':' + s + 'Z';  
 
 
 
@@ -173,6 +189,7 @@ function buttons(flight, i) {
 // Fullfil the 'My Flights Table' accroding to the input.
 var row;
 let btn;
+let btn2;
 
 var tableId = [];
 var mapOfPaths = new Map();
@@ -186,8 +203,7 @@ function updateStatus(flight) {
         if (flight.flight_id != tableId[i] &&
             mapOfMyFlights.get(tableId[i]).style.backgroundColor == "blue") {
             replace(tableId[i]);
-        }
-        
+        }        
     }
 
     document.getElementById('Company').innerHTML = flight.company_name;
@@ -197,12 +213,14 @@ function updateStatus(flight) {
     document.getElementById('Start').innerHTML = flight.initial_location;
     document.getElementById('End').innerHTML = flight.final_location;
 
-    var flightRow = mapOfMyFlights.get(flight.flight_id);
-    flightRow.style.backgroundColor = "blue";
-    var mark = mapOfAirplane.get(flight.flight_id);  
-    mark.setIcon('css/blueAP.png');
+    if (mapOfMyFlights.get(flight.flight_id).style.backgroundColor != "blue") {
 
-    drawLines(flight);
+        var flightRow = mapOfMyFlights.get(flight.flight_id);
+        flightRow.style.backgroundColor = "blue";
+        var mark = mapOfAirplane.get(flight.flight_id);
+        mark.setIcon('css/blueAP.png');
+        drawLines(flight);
+    }
 }
 
 function clickOnMap(flight) {
@@ -245,9 +263,66 @@ function removeDetails(flight) {
     document.getElementById('End').innerHTML = "";
 
     var removeDraw = mapOfPaths.get(flight.flight_id);
-    removeDraw.setMap(null);
+    if (removeDetails != null) {
+        removeDraw.setMap(null);
+    }
 }
 
+function deleteStatus(flight) {
+    if (mapOfMyFlights.get(flight.flight_id).style.backgroundColor == "blue") {
+        clickOnMap(flight);
+    }
+    else {
+
+        var butt = document.getElementById("btnid" + flight.flight_id);
+        var row = butt.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+
+        removeDetails(flight);
+
+        var removeAirplane = mapOfAirplane.get(flight.flight_id);
+        removeAirplane.setMap(null);
+
+        var d = tableId.indexOf(flight.flight_id);
+        if (~d) {
+            tableId.splice(d, 1);
+        }
+        var xhttpDel = new XMLHttpRequest();
+        xhttpDel.open("DELETE", "/api/Flights/".concat(flight.flight_id), true);
+        xhttpDel.send();
+    }
+}
+
+function btn2Remove(flight) {
+    /*
+    var row = btn2.parentNode.parentNode;
+    if (row != null) {
+        row.parentNode.removeChild(row);
+    }*/
+
+    if (flight.is_external == false) {
+        var butt = document.getElementById("btnid" + flight.flight_id);
+        var row = butt.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+    else {
+        var butt = document.getElementById("btn" + flight.flight_id);
+        var row = butt.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
+    
+    if (mapOfMyFlights.get(flight.flight_id).style.backgroundColor == "blue") {
+        removeDetails(flight);
+    }    
+
+    var removeAirplane = mapOfAirplane.get(flight.flight_id);
+    removeAirplane.setMap(null);
+    /*
+    var xhttpDel = new XMLHttpRequest();
+    xhttpDel.open("DELETE", "/api/Flights/".concat(flight.flight_id), true);
+    xhttpDel.send();*/
+}
 
 function setFlightsTable(flight) {
 
@@ -273,7 +348,7 @@ function setFlightsTable(flight) {
 
         
         // Check if the current flight is already exists in the fligts table.
-        let btn2;
+        
         let tr = document.createElement("tr");
         let th1 = document.createElement("th");
         let th2 = document.createElement("th");
@@ -285,10 +360,12 @@ function setFlightsTable(flight) {
         console.log(flight.company_name);
         li2.appendChild(document.createTextNode(flight.company_name));
         btn = document.createElement("button");
+        btn.setAttribute("id", "btn" + flight.flight_id);
         btn.appendChild(document.createTextNode("press"));
         btn.style.background = "#8FBC8F";
         if (flight.is_external == false) {
             btn2 = document.createElement("button");
+            btn2.setAttribute("id", "btnid" + flight.flight_id);
             console.log("bool1 is " + flight.is_external);
             btn2.appendChild(document.createTextNode("delete"));
             btn2.style.background = "red";
@@ -312,13 +389,17 @@ function setFlightsTable(flight) {
         btn.addEventListener('click', function () { updateStatus(flight); }); 
        
         if (flight.is_external == false) {
-            btn2.addEventListener('click', function () {
-
+            btn2.addEventListener('click', function () { deleteStatus(flight); });
+          
+            
+                /*
                 if (mapOfMyFlights.get(flight.flight_id).style.backgroundColor == "blue") {
                     clickOnMap(flight);
                 }
                 else {
-                    var row = btn2.parentNode.parentNode;
+
+                    var butt = document.getElementById("btnid" + flight.flight_id);
+                    var row = butt.parentNode.parentNode;
                     row.parentNode.removeChild(row);
 
                     removeDetails(flight);
@@ -326,12 +407,16 @@ function setFlightsTable(flight) {
                     var removeAirplane = mapOfAirplane.get(flight.flight_id);
                     removeAirplane.setMap(null);
 
+                    var d = tableId.indexOf(flight.flight_id);
+                    if (~d) {
+                        tableId.splice(d, 1);
+                    }
                     var xhttpDel = new XMLHttpRequest();
                     xhttpDel.open("DELETE", "/api/Flights/".concat(flight.flight_id), true);
                     xhttpDel.send();
-                }
+                }*/
 
-            })
+            //})
         }
     }
 }
@@ -459,4 +544,33 @@ function createButton(context, func) {
     button.value = "im a button";
     button.onclick = func;
     context.appendChild(button);
+}
+
+
+function timeCalc() {
+    var today = new Date();
+    var h = today.getHours();
+    if (h < 10) {
+        h = "0" + h;
+    }
+    var m = today.getMinutes();
+    if (m < 10) {
+        m = "0" + m;
+    }
+    var s = today.getSeconds();
+    if (s < 10) {
+        s = "0" + s;
+    }
+    var day = today.getDate();
+    if (day < 10) {
+        day = "0" + day;
+    }
+    var month = today.getMonth() + 1;
+    if (month < 10) {
+        month = "0" + month;
+    }
+    var year = today.getFullYear();
+
+    var format = year + '-' + month + '-' + day + 'T' + h + ':' + m + ':' + s + 'Z';
+    return format;
 }

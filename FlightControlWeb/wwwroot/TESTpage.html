@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <TITLE>Flights Control</TITLE>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="photos/app_icon.png">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial;
+            padding: 10px;
+            background: #f1f1f1;
+           
+        }
+
+        /* Header/Blog Title */
+        .mainHeader {
+            padding: 30px;
+            text-align: center;
+            background: white;
+        }
+
+            .mainHeader h1 {
+                font-size: 50px;
+            }
+
+
+        /* Create two unequal columns that floats next to each other */
+        /* Left column */
+        .leftArea {
+            float: left;
+            width: 75%;
+        }
+
+        /* Right column */
+        .rightArea {
+            float: left;
+            width: 25%;
+            background-color: #f1f1f1;
+            padding-left: 20px;
+        }
+
+        /* Fake image */
+        .fakeimg {
+            background-color: #aaa;
+            width: 100%;
+            padding: 20px;
+        }
+
+        /* Add a card effect for articles */
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin-top: 0px;
+        }
+
+        /* Clear floats after the columns */
+        .mainArea:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 5px;
+            text-align: left;
+            background: #ddd;
+            margin-top: 20px;
+        }
+
+
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color: cornflowerblue;">
+
+    <div id="mainHeader">
+        <div style="text-align:center " class="header">
+            <h1>Flights Control</h1>
+        </div>
+    </div>
+
+    <!-- The main area of the page-->
+    <div class="mainArea">
+        <!-- The left area of the screen-->
+        <div class="leftArea">
+            <!-- THE MAP CARD-->
+            <div class="card">
+                <h1 style="text-align: center">Map</h1>
+                <div id="map"></div>
+                <script>
+                    var myCenter = { lat: 22.236, lng: 31.056 };
+                    function initMap() {
+                        var options = {
+                            zoom: 2,
+                            center: { lat: 42.236, lng: -71.056 }
+                        }
+                        map = new google.maps.Map(document.getElementById('map'), options);
+                    }
+                    var marker = new google.maps.Marker({
+                         position:myCenter,
+                         animation:google.maps.Animation.BOUNCE
+                    });
+                    marker.setMap(map);
+                </script>
+                <script async defer
+                        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0MdOxn6PqHrjcgtpxu3dqeAbKk-WVnTc&callback=initMap">
+                </script>
+            </div>
+            <!--The Flight Details under the Map CARD-->
+            <div class="card">
+                <h2 style="text-align: center">Flight Details</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Flight ID</th>
+                            <th>Company</th>
+                            <th>Take Off</th>
+                            <th>Passengers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BKS123</td>
+                            <td>Swiss</td>
+                            <td>DD/MM/YY</td>
+                            <td>212</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- The Right area: Fligts & External Flights-->
+        <div class="rightArea">
+            <div class="card">
+                <h2>My Flights</h2>
+                <table id="flightTable" style="width:100%">
+                    <tr>
+                        <th>Flight ID</th>
+                        <th>Take Off</th>
+                        <th>Arrival</th>
+                    </tr>
+
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>External Flights</h3>
+                <table id="extFlightTable" style="width:100%">
+                    <tr>
+                        <th>Flight ID</th>
+                        <th>Take Off</th>
+                        <th>Arrival</th>
+                    </tr>
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <h4>Flights Control ®</h4>
+        <h6>Devoloped By Liad Cohen and Yaron Sofer </h6>
+    </div>
+</body>
+</html>
+

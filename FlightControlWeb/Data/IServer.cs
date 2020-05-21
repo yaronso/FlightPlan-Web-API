@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FlightControlWeb.Data
 {
-    interface IServer
+    public interface IServer
     {
         IEnumerable<Servers> GetAllServers();
         Servers GetServerById(string id);

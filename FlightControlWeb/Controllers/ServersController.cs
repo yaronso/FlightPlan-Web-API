@@ -13,29 +13,35 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class ServersController : ControllerBase
     {
-        IServer manager = new ServerManager();
+        //public IServer manager = new ServerManager();
+        public IServer managerServers;
         private static Random random = new Random();
+
+        public ServersController(IServer manager)
+        {
+            this.managerServers = manager;
+        }
 
         // GET: api/servers
         [HttpGet]
         public IEnumerable<Servers> GetServers()
         {
-            return manager.GetAllServers();
+            return managerServers.GetAllServers();
         }
 
         // POST: api/servers/6
         [HttpPost]
         public void Post([FromBody] Servers s)
         {
-            s.ServerId = RandomId();            
-            manager.AddServer(s);
+            s.ServerId = RandomId();
+            managerServers.AddServer(s);
         }
 
         // DELETE: api/servers/5
         [HttpDelete("{id}")]
         public void DeleteSer(string id)
         {
-           manager.DeleteServer(id);
+            managerServers.DeleteServer(id);
         }
 
         private string RandomId()
