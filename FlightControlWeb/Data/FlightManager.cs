@@ -12,38 +12,44 @@ using System.Threading.Tasks;
 
 namespace FlightControlWeb.Data
 {
+    // A conrete class which implements the IFlightManger interface for dependency
+    // injection in the Flightscontroller.
     public class FlightManager : IFlightManager
     {
-        // The Flights dictionary
+        // Init the Flights dictionary.
         public static ConcurrentDictionary<string, Flight> FlightsDic
         = new ConcurrentDictionary<string, Flight>();
         string format = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         CultureInfo provider = CultureInfo.InvariantCulture;
 
 
-        // The flights Dic getter
+        // Getter for the Flights dictionary.
         public ConcurrentDictionary<string, Flight> getDic()
         {
             return FlightsDic;
         }
 
+        // Adding a flight to the dictionary.
         public void AddFlight(Flight f)
         {
             FlightsDic.TryAdd(f.flight_id, f);
         }
 
+        // Delete a flight from the dictionary.
         public void DeleteFlight(string id)
         {
             Flight delete = GetFlightById(id);
             FlightsDic.TryRemove(id, out delete);
         }
 
+        // Get the whole flights from the dictionary.
         public IEnumerable<Flight> GetAllFlights()
         {
             List<Flight> Flights = FlightsDic.Values.ToList();
             return Flights;
         }
 
+        // Get a specific flight by flight id.
         public Flight GetFlightById(string id)
         {
             FlightsDic.TryGetValue(id, out Flight value);
@@ -60,13 +66,22 @@ namespace FlightControlWeb.Data
             ConcurrentDictionary<string, Flight> FlightsDic = getDic();
             DateTime dateTime = ParseDateTime(relative_to);
             List<Flight> list = new List<Flight>();
+            // Iterate through the pairs in the Flights dictionary.
             foreach (var keyValuePair in FlightsDic)
             {
+                // verify that the date time is valid.
                 if (keyValuePair.Value.date_time <= dateTime &&
                     keyValuePair.Value.landing_time >= dateTime &&
                     keyValuePair.Value.is_external == false)
                 {
-                    Interpolation(keyValuePair.Value, dateTime);
+                    try
+                    {
+                        Interpolation(keyValuePair.Value, dateTime);
+                    }
+                    catch (Exception e)
+                    {
+                        e.ToString();
+                    }
                     list.Add(keyValuePair.Value);
                 }
             }
@@ -79,62 +94,76 @@ namespace FlightControlWeb.Data
             ConcurrentDictionary<string, Flight> FlightsDic = getDic();
             DateTime dateTime = ParseDateTime(relative_to);
             List<Flight> list = new List<Flight>();
+            //Iterate through the Flights Dictionary.
             foreach (var keyValuePair in FlightsDic)
             {
+                // Verify that the date time is valid.
                 if (keyValuePair.Value.date_time <= dateTime &&
                     keyValuePair.Value.landing_time >= dateTime &&
                     keyValuePair.Value.is_external == false)
                 {
-                    Interpolation(keyValuePair.Value, dateTime);
+                    try
+                    {
+                        Interpolation(keyValuePair.Value, dateTime);
+                    } catch (Exception e)
+                    {
+                        e.ToString();
+                    }  
                     list.Add(keyValuePair.Value);
                 }
             }
  
-               string url;
-               List<Flight> exFlights = new List<Flight>();
-               foreach (var keyValuePair in ServerManager.ServersDic)
-               {
-                   url = keyValuePair.Value.ServerURL;
-                   url = url + "/api/Flights?relative_to=" + DateTime.Now.ToString(format);
-                   using (var client = new HttpClient())
-                   {
-                       var content = await client.GetStringAsync(url);
-                       exFlights = JsonConvert.DeserializeObject<List<Flight>>(content);
-                       await getFlightPlansFromExServerAsync(exFlights, keyValuePair.Value.ServerURL);
-                       list.AddRange(exFlights);
-                   }
+            string url;
+            List<Flight> exFlights = new List<Flight>();
+            // Iterate through the Servers dictionary and get the external flights from each sever.
+            foreach (var keyValuePair in ServerManager.ServersDic)
+            {
+                url = keyValuePair.Value.ServerURL;
+                url = url + "/api/Flights?relative_to=" + DateTime.Now.ToString(format);
+                // Create a http client request.
+                using (var client = new HttpClient())
+                {
+                    var content = await client.GetStringAsync(url);
+                    // Convert the data from json to C# object.
+                    exFlights = JsonConvert.DeserializeObject<List<Flight>>(content);
+                    await getFlightPlansFromExServerAsync(exFlights, keyValuePair.Value.ServerURL);
+                    // Add the external flights to the main flights list.
+                    list.AddRange(exFlights);
+                }
 
-               }
-            
+            }
             return list;
         }
 
+        // The following function is used for getting the correct Flight Plan according the 
+        // flight id by a http client request. it will invoke the client side's function which
+        // will draw the path of the flight plan.
         private async Task getFlightPlansFromExServerAsync(List<Flight> exFlights, string ur)
         {
-            string url = ur + "/api/FlightPlan/";
             FlightPlan fp = new FlightPlan();
             var client = new HttpClient();
             foreach (var flight in exFlights)
             {
+                string url = ur + "/api/FlightPlan/";
                 flight.is_external = true;
                 url = url + flight.flight_id;
                 var content = await client.GetStringAsync(url);
                 fp = JsonConvert.DeserializeObject<FlightPlan>(content);
                 fp.flightPlanID = flight.flight_id;
                 FlightPlanManager.FlightPlansDic.TryAdd(fp.flightPlanID, fp);
-
             }
-
         }
 
+        // The following function parses the date time according the required date format.
         private DateTime ParseDateTime(string d)
         {
             DateTime res;
             res = DateTime.ParseExact(d, this.format, this.provider);
-            Debug.WriteLine(res.ToString());
             return res;
         }
 
+        // The following function computes the path of the airplane 
+        // according his current time and his speed.
         private void Interpolation(Flight flight, DateTime date)
         {
             int i = 0;

@@ -13,10 +13,11 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class ServersController : ControllerBase
     {
-        //public IServer manager = new ServerManager();
+        // Fields.
         public IServer managerServers;
         private static Random random = new Random();
 
+        // The controller's constructor which has dependency injection of IServer object.
         public ServersController(IServer manager)
         {
             this.managerServers = manager;
@@ -44,6 +45,7 @@ namespace FlightControlWeb.Controllers
             managerServers.DeleteServer(id);
         }
 
+        // The following function randomize an id for each posted external server.
         private string RandomId()
         {            
             const string charsNum = "0123456789";

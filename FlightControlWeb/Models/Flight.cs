@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace FlightControlWeb.Models
 {
+    // The Flight class model which own the flights properties.
     public class Flight
     {   
-
         [Key]
         public string flight_id { get; set; }
         public double longitude { get; set; }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace FlightControlWeb.Data
 {
+    // The following interface sets the functionallity of the FlightPlan Manager objects.
     public interface IFlightPlanManager
     {
         IEnumerable<FlightPlan> GetAllFlightPlans();

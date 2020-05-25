@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FlightControlWeb.Data
 {
+    // The following interface sets the functionallity of the Flight Manager objects.
     public interface IFlightManager
     {
         ConcurrentDictionary<string, Flight> getDic();

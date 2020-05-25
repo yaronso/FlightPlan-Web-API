@@ -15,10 +15,11 @@ namespace FlightControlWeb.Controllers
     [ApiController]
     public class FlightPlanController : ControllerBase
     {
-        //IFlightPlanManager managerFlightPlan = new FlightPlanManager();
+        // Fields.
         IFlightPlanManager managerFlightPlan;
         private static Random random = new Random();
 
+        // The controller's constructor which has dependency injection of FlightPlanManager object.
         public FlightPlanController(IFlightPlanManager managerFP)
         {
             this.managerFlightPlan = managerFP;
@@ -36,24 +37,20 @@ namespace FlightControlWeb.Controllers
         public FlightPlan GetFlightPlan(string id)
         {
             FlightPlan fp = managerFlightPlan.GetFlightPlanById(id);
-            // Check if the flight plan is null.
-            if(fp == null)
-            {
-                throw new ArgumentException($"There is no Flight Plan with the id {id}", nameof(id));
-            }
-            return managerFlightPlan.GetFlightPlanById(id);
+            return fp;
         }
         // POST: api/FlightPlan/6
         [HttpPost]
         public void Post(FlightPlan fp)
         {
+            // Get the randomized ID for the posted flight plan.
             string id = this.RandomString();
             fp.flightPlanID = id;
+            // Create a new flight object with the compatible properties as the posted flight plan.
             Flight flight = new Flight();
             flight.flight_id = id;
             flight.passengers = fp.passengers;
             flight.company_name = fp.company_name;
-            ////flight.starting_time = fp.initial_location.date_time;
             flight.starting_datails = fp.initial_location.date_time.ToString("dd-MM-yyyy");
             flight.initial_location = "Lat: " + fp.initial_location.latitude.ToString() + "  Lon: " + fp
                 .initial_location.longitude.ToString();
@@ -66,6 +63,7 @@ namespace FlightControlWeb.Controllers
             int i;
             for (i = 0; i < fp.segments.Count; i++)
             {
+                // Count the total time in seconds of the whole segments.
                 end += fp.segments[i].timespan_seconds;
             }
 
@@ -80,6 +78,7 @@ namespace FlightControlWeb.Controllers
             
         }
 
+        // The following function randomized an ID for the posted Flight Plan.
         private string RandomString()
         {
             const string charsLet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

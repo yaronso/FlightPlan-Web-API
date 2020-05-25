@@ -8,14 +8,15 @@ using Newtonsoft.Json;
 
 namespace FlightControlWeb.Models
 {
+    // Inner class inside FligtPlan class.
     [Owned]
     public class InitialLocation 
-      {
+    {
            public double longitude { get; set; }
            public double latitude { get; set; }
            public DateTime date_time { get; set; }
     }
-
+    // Inner class inside FlightPlan class.
     [Owned]
     public class Segment
     {
@@ -24,10 +25,9 @@ namespace FlightControlWeb.Models
         public double timespan_seconds { get; set; }
      }
 
-    // https://www.jsonutils.com/
+    // The FlightPlan class model which own the FP properties with sub classes.
     public class FlightPlan
     {
-        // TODO - verify about FlightPlanID
         [Key]
         public string flightPlanID { get; set; }
         public int passengers { get; set; }
@@ -35,7 +35,7 @@ namespace FlightControlWeb.Models
         [Key]
         public InitialLocation initial_location { get; set; }
         [Key]
-        public IList<Segment> segments { get; set; }   // segments: lon, lat, time per sec, etc.
+        public IList<Segment> segments { get; set; }   
     }   
     
 }

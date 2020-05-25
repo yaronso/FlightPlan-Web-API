@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FlightControlWeb.Models
 {
-    
+    // The Server Class Model and his properties
     public class Servers
     {
         [Key]
