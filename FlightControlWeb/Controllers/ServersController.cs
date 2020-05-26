@@ -32,17 +32,31 @@ namespace FlightControlWeb.Controllers
 
         // POST: api/servers/6
         [HttpPost]
-        public void Post([FromBody] Servers s)
+        public StatusCodeResult Post([FromBody] Servers s)
         {
-            s.ServerId = RandomId();
-            managerServers.AddServer(s);
+            try
+            {
+                s.ServerId = RandomId();
+                managerServers.AddServer(s);
+                return StatusCode(StatusCodes.Status200OK);
+            } catch
+            {
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
         }
 
         // DELETE: api/servers/5
         [HttpDelete("{id}")]
-        public void DeleteSer(string id)
+        public StatusCodeResult DeleteSer(string id)
         {
-            managerServers.DeleteServer(id);
+            try
+            {
+                managerServers.DeleteServer(id);
+                return StatusCode(StatusCodes.Status200OK);
+            } catch
+            {
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
         }
 
         // The following function randomize an id for each posted external server.

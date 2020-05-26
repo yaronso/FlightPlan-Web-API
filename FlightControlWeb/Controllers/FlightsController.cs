@@ -51,9 +51,17 @@ namespace FlightControlWeb.Controllers
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void DeleteFlight(string id)
+        public StatusCodeResult DeleteFlight(string id)
         {
-            managerFlight.DeleteFlight(id);
+            try
+            {
+                managerFlight.DeleteFlight(id);
+                return StatusCode(StatusCodes.Status200OK);
+            } catch
+            {
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
+
         }      
     }
 }

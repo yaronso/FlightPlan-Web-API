@@ -118,20 +118,31 @@ namespace FlightControlWeb.Data
             // Iterate through the Servers dictionary and get the external flights from each sever.
             foreach (var keyValuePair in ServerManager.ServersDic)
             {
-                url = keyValuePair.Value.ServerURL;
-                url = url + "/api/Flights?relative_to=" + DateTime.Now.ToString(format);
-                // Create a http client request.
-                using (var client = new HttpClient())
+                try
                 {
-                    var content = await client.GetStringAsync(url);
-                    // Convert the data from json to C# object.
-                    exFlights = JsonConvert.DeserializeObject<List<Flight>>(content);
-                    await getFlightPlansFromExServerAsync(exFlights, keyValuePair.Value.ServerURL);
-                    // Add the external flights to the main flights list.
-                    list.AddRange(exFlights);
+                    url = keyValuePair.Value.ServerURL;
+                    url = url + "/api/Flights?relative_to=" + DateTime.Now.ToString(format);
+                    // Create a http client request.
+                    using (var client = new HttpClient())
+                    {
+                        var content = await client.GetStringAsync(url);
+                        // Convert the data from json to C# object.
+                        exFlights = JsonConvert.DeserializeObject<List<Flight>>(content);
+                        await getFlightPlansFromExServerAsync(exFlights, keyValuePair.Value.ServerURL);
+                        // Add the external flights to the main flights list.
+                        list.AddRange(exFlights);
+                    }
+                } catch (Exception e)
+                {
+                    e.ToString();
+                    Debug.Write("sync all catch");
+                    //return list;
+                    continue;
                 }
 
             }
+
+            Debug.Write("list size and content" + list.Count+ "  " + list[0].company_name);
             return list;
         }
 
