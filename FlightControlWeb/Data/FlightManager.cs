@@ -121,7 +121,7 @@ namespace FlightControlWeb.Data
                 try
                 {
                     url = keyValuePair.Value.ServerURL;
-                    url = url + "/api/Flights?relative_to=" + DateTime.Now.ToString(format);
+                    url = url + "/api/Flights?relative_to=" + DateTime.Now.AddHours(-3).ToString(format);
                     // Create a http client request.
                     using (var client = new HttpClient())
                     {
@@ -142,7 +142,7 @@ namespace FlightControlWeb.Data
 
             }
 
-            Debug.Write("list size and content" + list.Count+ "  " + list[0].company_name);
+            Debug.Write("list size and content" + list.Count + "  " + list[0].company_name);
             return list;
         }
 
@@ -161,6 +161,24 @@ namespace FlightControlWeb.Data
                 var content = await client.GetStringAsync(url);
                 fp = JsonConvert.DeserializeObject<FlightPlan>(content);
                 fp.flightPlanID = flight.flight_id;
+                flight.starting_datails = fp.initial_location.date_time.ToString("dd-MM-yyyy");
+                flight.initial_location = "Lat: " + fp.initial_location.latitude.ToString() + "  Lon: " + fp
+                    .initial_location.longitude.ToString();
+                double end = 0;
+
+                int i;
+                for (i = 0; i < fp.segments.Count; i++)
+                {
+                    // Count the total time in seconds of the whole segments.
+                    end += fp.segments[i].timespan_seconds;
+                }
+
+                flight.final_location = "Lat: " + fp.segments[i - 1].latitude.ToString() + "  Lon: " +
+                    fp.segments[i - 1].longitude.ToString();
+                DateTime landing = new DateTime();
+                landing = fp.initial_location.date_time.AddSeconds(end);
+                flight.landing_time = landing;
+                flight.landing_details = landing.ToString("dd-MM-yyyy");
                 FlightPlanManager.FlightPlansDic.TryAdd(fp.flightPlanID, fp);
             }
         }

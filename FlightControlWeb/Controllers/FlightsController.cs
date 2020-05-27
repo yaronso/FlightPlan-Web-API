@@ -29,17 +29,18 @@ namespace FlightControlWeb.Controllers
         } 
 
         [HttpGet("{sync_all?}")]
+       // public async Task<IActionResult> Get([FromQuery] string relative_to, [FromQuery] string sync_all)
         public async Task<List<Flight>> Get([FromQuery] string relative_to, [FromQuery] string sync_all)
         {
             // If we got the sync all parameter.
-            if(Request.QueryString.Value.Contains("sync_all"))
+            if (Request.QueryString.Value.Contains("sync_all"))
             {
-
-               return await managerFlight.get_All_FlightsAsync(relative_to);
+                    //return Ok(await managerFlight.get_All_FlightsAsync(relative_to));
+                    return await managerFlight.get_All_FlightsAsync(relative_to);
             }
             // if we dont have the sync all parameter.
             return await managerFlight.get_Not_All_Async(relative_to);
-            
+
         }
 
         // POST: api/Flights

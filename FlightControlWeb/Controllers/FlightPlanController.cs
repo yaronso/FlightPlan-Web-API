@@ -42,7 +42,7 @@ namespace FlightControlWeb.Controllers
             }
             catch
             {
-                return StatusCode(StatusCodes.Status400BadRequest);
+                return StatusCode(StatusCodes.Status204NoContent);
             }
         }
         // POST: api/FlightPlan/6
@@ -77,7 +77,7 @@ namespace FlightControlWeb.Controllers
 
                 flight.final_location = "Lat: " + fp.segments[i - 1].latitude.ToString() + "  Lon: " +
                     fp.segments[i - 1].longitude.ToString();
-                DateTime landing = new DateTime();
+                DateTime landing = new DateTime();               
                 landing = fp.initial_location.date_time.AddSeconds(end);
                 flight.landing_time = landing;
                 flight.landing_details = landing.ToString("dd-MM-yyyy");
